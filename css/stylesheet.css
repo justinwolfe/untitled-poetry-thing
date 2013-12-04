@@ -1,0 +1,62 @@
+* {
+	cursor: default;
+}
+
+#startButton{
+	display: inline-block;
+	background-color: black;
+	color: white;
+}
+
+#inputScreen{
+	width: 100%;
+	height: 100%;
+}
+
+#writingScreen{
+	display: none;
+	background-color: black;
+	color: white;
+	width: 100%;
+	height: 100%;
+}
+
+.randomChoice{
+	outline: 1px solid white;
+	margin: 3%;
+}
+.suggestedChoice{
+	outline: 1px solid white;
+	background-color: white;
+	color: black;
+	margin: 3%;
+}
+
+#controlsContainer{
+	position: fixed;
+	outline: 1px solid gray;
+	top: 75%;
+	left: 0;
+	width: 100%;
+	height: 5%;
+}
+
+#choiceContainers{
+	position: fixed;
+	outline: 1px solid gray;
+	top: 80%;
+	left: 0;
+	width: 100%;
+	height: 20%;
+}
+
+#suggestedChoicesContainer{
+	float: left;
+	width: 50%;
+	height: 100%;
+}
+#randomChoicesContainer{
+	float: right;
+	width: 50%;
+	height: 100%;
+}
