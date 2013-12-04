@@ -7,11 +7,11 @@ var runtime = {
 	choiceLength: 2, 
 	randomChoiceAmount: 25,
 	suggestedChoiceAmount: 10,
-	requestsStarted: false,
 	fileInputs: [],
 	fileRequests: {},
 	fileRequestIDs: [],
 	requestCounter: 0,
+	requestsStarted: false,
 	requestsDone: false,
 	inputString: ""
 };
@@ -98,7 +98,6 @@ function switchScreen(){
 
 function eventListeners(){
 // controls to add - new line, new stanza
-	$("#writingContainer").sortable();
 	$("#randomChoicesContainer").on("click", "span", function() {
 		var choice = $(this).text();
 		$("#writingContainer").append("<span> " + choice + " </span>");
@@ -166,3 +165,4 @@ function giveChoices(choices, container){
 	$(container).html("");
 	$(container).append(choicesString);
 };
+

@@ -2,6 +2,13 @@
 	cursor: default;
 }
 
+textarea {
+	border: 0;
+	outline: none;
+	resize: none;
+	background-color: transparent;
+}
+
 #startButton{
 	display: inline-block;
 	background-color: black;
@@ -25,6 +32,7 @@
 	outline: 1px solid white;
 	margin: 3%;
 }
+
 .suggestedChoice{
 	outline: 1px solid white;
 	background-color: white;
