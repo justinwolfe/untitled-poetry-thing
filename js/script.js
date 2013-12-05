@@ -87,6 +87,7 @@ function processInputs(){
 	runtime.inputString = runtime.inputString.toLowerCase();
 	runtime.tokens = runtime.inputString.split(" "); 
 	switchScreen();
+	setUpLines();
 	eventListeners();
 	getChoices("random");
 };
@@ -97,25 +98,30 @@ function switchScreen(){
 };
 
 function eventListeners(){
+	//$("ol.connected").sortable({group: 'connected', tolerance: -10});
+	$( "#randomChoices, #selectedChoices, .connected" ).sortable({
+      connectWith: ".connected",
+	  tolerance: "pointer"
+    })
 // controls to add - new line, new stanza
-	$("#randomChoicesContainer").on("click", "span", function() {
+	/*$("#randomChoices").on("click", "li", function() {
 		var choice = $(this).text();
-		$("#writingContainer").append("<span> " + choice + " </span>");
+		$("#writingContainer").append("<li> " + choice + " </li>");
 		if (choice.indexOf(" ") != -1){
 			var tempArray = choice.split(" ");
 			choice = tempArray.pop();
 		};
 		getChoices("suggested", choice);
 	});
-	$("#suggestedChoicesContainer").on("click", "span", function() {
+	$("#suggestedChoices").on("click", "li", function() {
 		var choice = $(this).text();
-		$("#writingContainer").append("<span> " + choice + " </span>");
+		$("#writingContainer").append("<li> " + choice + " </li>");
 		if (choice.indexOf(" ") != -1){
 			var tempArray = choice.split(" ");
 			choice = tempArray.pop();
 		};
 		getChoices("suggested", choice);
-	});
+	});*/
 };
 
 function getChoices(type, word){
@@ -144,25 +150,31 @@ function getChoices(type, word){
 		choices.push(tempString);
 	};
 	if (type == "suggested"){
-		giveChoices(choices, "#suggestedChoicesContainer");
+		giveChoices(choices, "#suggestedChoices");
 	} else if (type == "random"){
-		giveChoices(choices, "#randomChoicesContainer");
+		giveChoices(choices, "#randomChoices");
 	};
 };
 
 function giveChoices(choices, container){
 	var choicesString = "";
-	if (container == "#suggestedChoicesContainer"){
+	if (container == "#suggestedChoices"){
 		for (i=0; i<runtime.suggestedChoiceAmount; i++){
 			var counter = Math.floor((Math.random()*choices.length)+0);
-			choicesString += " <span class='suggestedChoice'>" + choices[counter] + "</span> ";
+			choicesString += "<li class='suggestedChoice'>" + choices[counter] + "</li>";
 		};
-	} else if (container == "#randomChoicesContainer"){
+	} else if (container == "#randomChoices"){
 		for (i=0; i<choices.length; i++){
-			choicesString += " <span class='randomChoice'>" + choices[i] + "</span> ";
+			choicesString += "<li class='randomChoice'>" + choices[i] + "</li>";
 		};
 	};
 	$(container).html("");
 	$(container).append(choicesString);
+};
+
+function setUpLines(){
+	for (i=0; i<10; i++){
+		$("#poemContainer").append("<ul class='line connected'><li class='setup'></li></ul>");
+	}
 };
 

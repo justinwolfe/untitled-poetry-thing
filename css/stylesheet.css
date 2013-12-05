@@ -2,6 +2,10 @@
 	cursor: default;
 }
 
+li { 
+	display:inline; 
+}
+
 textarea {
 	border: 0;
 	outline: none;
@@ -29,16 +33,25 @@ textarea {
 }
 
 .randomChoice{
-	outline: 1px solid white;
-	margin: 3%;
+	padding-left: 1%;
+	padding-right: 1%;
 }
 
 .suggestedChoice{
 	outline: 1px solid white;
 	background-color: white;
 	color: black;
-	margin: 3%;
 }
+
+.line{
+	border: 1px solid red;
+	background-color: grey;
+	height: 1em;
+}
+
+.setup{
+	float: left;
+};
 
 #controlsContainer{
 	position: fixed;
