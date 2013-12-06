@@ -101,8 +101,21 @@ function eventListeners(){
 	//$("ol.connected").sortable({group: 'connected', tolerance: -10});
 	$( "#randomChoices, #selectedChoices, .connected" ).sortable({
       connectWith: ".connected",
-	  tolerance: "pointer"
-    })
+	  tolerance: "pointer",
+	  beforeStop: function( event, ui ) {
+		//console.log(ui.item.text());
+		var text = ui.item.text();
+		var textArray = [];
+		var replaceText = "";
+		if (text.indexOf(" ") != -1){
+			textArray = text.split(" ");
+			for (i=0; i<textArray.length; i++){
+				replaceText += "<li class='randomChoice'>" + textArray[i] + "</li>"
+			};
+			ui.item.replaceWith(replaceText);
+		};
+	  }
+    });
 // controls to add - new line, new stanza
 	/*$("#randomChoices").on("click", "li", function() {
 		var choice = $(this).text();
