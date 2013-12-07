@@ -1,4 +1,9 @@
 $(document).ready(function() {
+	$("body").on({
+		ontouchmove : function(e) {
+			e.preventDefault(); 
+		}
+	});
 	setInputs();
 });
 
@@ -102,6 +107,7 @@ function eventListeners(){
 		connectWith: ".connected",
 		tolerance: "pointer",
 		activate: function ( event, ui ) {
+			removeEdit();
 			showGuides();
 		},
 		beforeStop: function( event, ui ) {
@@ -124,6 +130,13 @@ function eventListeners(){
 		}
     });
 	$(".setup").remove();
+	$("#poemContainer").on("dblclick", "li", function () {
+		$(this).attr('contenteditable', 'true');
+		$(this).addClass('edit');
+		$(this).focus();
+	}).on("blur", "li", function () {
+		removeEdit();
+	});
 // controls to add - new line, new stanza
 	/*$("#randomChoices").on("click", "li", function() {
 		var choice = $(this).text();
@@ -199,11 +212,16 @@ function setUpLines(){
 	}
 };
 
+function removeEdit(){
+	$(".edit").attr('contenteditable', 'false');
+	$(".edit").removeClass('edit');
+};
+
 function showGuides(){
-	$(".line").addClass("SORTline");
+	$(".line").addClass("lineGUIDE");
 };
 
 function hideGuides(){
-	$(".line").removeClass("SORTline");
+	$(".line").removeClass("lineGUIDE");
 };
 

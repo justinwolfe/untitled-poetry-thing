@@ -36,6 +36,7 @@ textarea {
 	/* Rules below not implemented in browsers yet */
 	-o-user-select: none;
 	user-select: none;
+	font-size: 3em;
 }
 
 .randomChoice{
@@ -56,7 +57,7 @@ textarea {
 	height: 1em;
 }
 
-.SORTline{
+.lineGUIDE{
 	background-color: grey;
 }
 
@@ -66,6 +67,10 @@ textarea {
 
 .word{
 	margin-left: .25%;
+}
+
+.edit{
+	background-color: blue;
 }
 
 #controlsContainer{
