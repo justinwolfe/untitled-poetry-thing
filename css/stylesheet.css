@@ -30,6 +30,12 @@ textarea {
 	color: white;
 	width: 100%;
 	height: 100%;
+	-webkit-user-select: none; /* Chrome/Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+ */
+	/* Rules below not implemented in browsers yet */
+	-o-user-select: none;
+	user-select: none;
 }
 
 .randomChoice{
@@ -39,20 +45,28 @@ textarea {
 }
 
 .suggestedChoice{
+	margin-left: .5%;
+	margin-right: .5%;
 	outline: 1px solid white;
 	background-color: white;
 	color: black;
 }
 
 .line{
-	border: 1px solid red;
-	background-color: grey;
 	height: 1em;
+}
+
+.SORTline{
+	background-color: grey;
 }
 
 .setup{
 	float: left;
-};
+}
+
+.word{
+	margin-left: .25%;
+}
 
 #controlsContainer{
 	position: fixed;

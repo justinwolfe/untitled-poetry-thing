@@ -98,24 +98,32 @@ function switchScreen(){
 };
 
 function eventListeners(){
-	//$("ol.connected").sortable({group: 'connected', tolerance: -10});
 	$( "#randomChoices, #selectedChoices, .connected" ).sortable({
-      connectWith: ".connected",
-	  tolerance: "pointer",
-	  beforeStop: function( event, ui ) {
-		//console.log(ui.item.text());
-		var text = ui.item.text();
-		var textArray = [];
-		var replaceText = "";
-		if (text.indexOf(" ") != -1){
-			textArray = text.split(" ");
-			for (i=0; i<textArray.length; i++){
-				replaceText += "<li class='randomChoice'>" + textArray[i] + "</li>"
+		connectWith: ".connected",
+		tolerance: "pointer",
+		activate: function ( event, ui ) {
+			showGuides();
+		},
+		beforeStop: function( event, ui ) {
+			//console.log(ui.item.text());
+			var text = ui.item.text();
+			var textArray = [];
+			var replaceText = "";
+			if (text.indexOf(" ") != -1){
+				textArray = text.split(" ");
+				for (i=0; i<textArray.length; i++){
+					replaceText += "<li class='word'>" + textArray[i] + "</li>"
+				};
+				var word = textArray.pop();
+				getChoices("suggested", word);
+				ui.item.replaceWith(replaceText);
+			} else {
+				getChoices("suggested", text);
 			};
-			ui.item.replaceWith(replaceText);
-		};
-	  }
+			hideGuides();
+		}
     });
+	$(".setup").remove();
 // controls to add - new line, new stanza
 	/*$("#randomChoices").on("click", "li", function() {
 		var choice = $(this).text();
@@ -189,5 +197,13 @@ function setUpLines(){
 	for (i=0; i<10; i++){
 		$("#poemContainer").append("<ul class='line connected'><li class='setup'></li></ul>");
 	}
+};
+
+function showGuides(){
+	$(".line").addClass("SORTline");
+};
+
+function hideGuides(){
+	$(".line").removeClass("SORTline");
 };
 
