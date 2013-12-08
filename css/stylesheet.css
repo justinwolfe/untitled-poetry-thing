@@ -36,7 +36,7 @@ textarea {
 	/* Rules below not implemented in browsers yet */
 	-o-user-select: none;
 	user-select: none;
-	font-size: 3em;
+	font-size: 2em;
 }
 
 .randomChoice{
@@ -66,7 +66,7 @@ textarea {
 }
 
 .word{
-	margin-left: .25%;
+	margin-left: .5%;
 }
 
 .edit{

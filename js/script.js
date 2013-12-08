@@ -134,8 +134,34 @@ function eventListeners(){
 		$(this).attr('contenteditable', 'true');
 		$(this).addClass('edit');
 		$(this).focus();
-	}).on("blur", "li", function () {
-		removeEdit();
+	}).on("blur", "li.edit", function () {
+		$(this).attr('contenteditable', 'false');
+		cleanEdit();
+		$(this).removeClass('edit');
+	}).on("keypress", "li.edit", function (event) {
+		var keyCode = event.keyCode;
+		console.log(keyCode);
+		if (keyCode == 32){
+			event.preventDefault(); 
+			var caretPosition = window.getSelection().getRangeAt(0).startOffset;
+			var word = $(this).text()
+			console.log(caretPosition + ", " + word.length); 
+			if (caretPosition == 0){
+				$(this).blur();
+			} else if (caretPosition > 0 && caretPosition < word.length){
+				$(this).text(word.substring(0, caretPosition));
+				$(this).after("<li class='word edit' contenteditable='true'>" + word.substring(caretPosition, word.length) + "</li>");
+				$(this).next('li').focus();
+			} else if (caretPosition >= word.length){
+				$(this).after("<li class='word edit' contenteditable='true'></li>");
+				$(this).next('li').focus();
+			};
+		};
+		if (keyCode == 13){
+			event.preventDefault(); 
+			$(this).next('ul.line').prepend("<li class='word edit' contenteditable='true'></li>")
+			$(this).next('li').focus();
+		};
 	});
 // controls to add - new line, new stanza
 	/*$("#randomChoices").on("click", "li", function() {
@@ -217,6 +243,13 @@ function removeEdit(){
 	$(".edit").removeClass('edit');
 };
 
+function cleanEdit(){
+	$(".edit").each(function(){
+		var text = $(this).text();
+		console.log(text);
+	});
+};
+
 function showGuides(){
 	$(".line").addClass("lineGUIDE");
 };
@@ -224,4 +257,28 @@ function showGuides(){
 function hideGuides(){
 	$(".line").removeClass("lineGUIDE");
 };
+
+function getCharacterOffsetWithin(range, node) {
+    var treeWalker = document.createTreeWalker(
+        node,
+        NodeFilter.SHOW_TEXT,
+        function(node) {
+            var nodeRange = document.createRange();
+            nodeRange.selectNodeContents(node);
+            return nodeRange.compareBoundaryPoints(Range.END_TO_END, range) < 1 ?
+                NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        },
+        false
+    );
+
+    var charCount = 0;
+    while (treeWalker.nextNode()) {
+        charCount += treeWalker.currentNode.length;
+    }
+    if (range.startContainer.nodeType == 3) {
+        charCount += range.startOffset;
+    }
+    return charCount;
+}
+
 
