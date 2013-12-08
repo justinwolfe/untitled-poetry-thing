@@ -136,13 +136,16 @@ function eventListeners(){
 		$(this).focus();
 	}).on("blur", "li.edit", function () {
 		$(this).attr('contenteditable', 'false');
+		// use this to clean up punctuation 
 		cleanEdit();
 		$(this).removeClass('edit');
 	}).on("keydown", "li.edit", function (event) {
 		var keyCode = event.keyCode;
-		console.log(keyCode);
 		var caretPosition = window.getSelection().getRangeAt(0).startOffset;
 		var word = $(this).text()
+		var wordIndex = $(this).index();
+		var wordsInLine = $(this).siblings().length;
+		//space bar
 		if (keyCode == 32){
 			event.preventDefault(); 
 			console.log(caretPosition + ", " + word.length); 
@@ -159,6 +162,7 @@ function eventListeners(){
 				sel.collapseToEnd();
 			};
 		};
+		// backspace
 		if (keyCode == 8){
 			if (caretPosition == 0){
 				$(this).prev('.word').attr('contenteditable', 'true').addClass('edit').focus();
@@ -166,12 +170,68 @@ function eventListeners(){
 				setEndOfContenteditable(elem);
 			};
 		};
+		// enter
 		if (keyCode == 13){
 			event.preventDefault(); 
-			console.log("enter");
-			$(this).prepend("<li class='word edit' contenteditable='true'>dog</li>")
-			$(this).next('li').focus();
-			console.log("well?");
+			var passNodes = "";
+			var stopRemove = false;
+			if (caretPosition == 0){
+				if (wordIndex < wordsInLine){
+					passNodes = "<li class='word'>" + $(this).text() + "</li>"
+					$(this).siblings().each( function () {
+						if ($(this).index() > wordIndex){
+							var tempWord = $(this).text();
+							passNodes += "<li class='word'>" + tempWord + "</li>";
+							$(this).remove();
+						};
+					});
+				} else {
+					passNodes = "<li class='word'>" + $(this).text() + "</li>"
+				};
+			} else if (caretPosition > 0 && caretPosition < word.length){
+				stopRemove = true;
+				if (wordIndex < wordsInLine){
+					$(this).text(word.substring(0, caretPosition));
+					$(this).after("<li class='word'>" + word.substring(caretPosition, word.length) + "</li>");
+					$(this).siblings().each( function () {
+						if ($(this).index() > wordIndex){
+							var tempWord = $(this).text();
+							passNodes += "<li class='word'>" + tempWord + "</li>";
+							$(this).remove();
+						};
+					});
+				} else {
+					//set this to before the return
+					$(this).text(word.substring(0, caretPosition));	
+					passNodes = "<li class='word'>" + word.substring(caretPosition, word.length) + "</li>"
+				};
+			} else if (caretPosition >= word.length){
+				if (wordIndex < wordsInLine){
+					stopRemove = true;
+					$(this).siblings().each( function () {
+						if ($(this).index() > wordIndex){
+							var tempWord = $(this).text();
+							passNodes += "<li class='word'>" + tempWord + "</li>";
+							$(this).remove();
+						};
+					});
+					console.log(passNodes);
+				} else {	
+					stopRemove = true;
+					passNodes = "<li class='word'></li>";
+				};
+			};
+			var nextParent = $(this).parent().next();
+			if (nextParent.hasClass('line') == true){
+				nextParent.prepend(passNodes);
+				nextParent.children().first('.word').addClass('edit').attr('contenteditable', 'true').focus();
+			} else {
+			};
+			if (stopRemove == true){
+				return;
+			} else {
+				$(this).remove();
+			};
 		};
 	});
 // controls to add - new line, new stanza
@@ -244,7 +304,7 @@ function giveChoices(choices, container){
 };
 
 function setUpLines(){
-	for (i=0; i<10; i++){
+	for (i=0; i<5; i++){
 		$("#poemContainer").append("<ul class='line connected'><li class='setup'></li></ul>");
 	}
 };
