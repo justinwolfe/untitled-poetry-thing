@@ -138,13 +138,13 @@ function eventListeners(){
 		$(this).attr('contenteditable', 'false');
 		cleanEdit();
 		$(this).removeClass('edit');
-	}).on("keypress", "li.edit", function (event) {
+	}).on("keydown", "li.edit", function (event) {
 		var keyCode = event.keyCode;
 		console.log(keyCode);
+		var caretPosition = window.getSelection().getRangeAt(0).startOffset;
+		var word = $(this).text()
 		if (keyCode == 32){
 			event.preventDefault(); 
-			var caretPosition = window.getSelection().getRangeAt(0).startOffset;
-			var word = $(this).text()
 			console.log(caretPosition + ", " + word.length); 
 			if (caretPosition == 0){
 				$(this).blur();
@@ -155,12 +155,23 @@ function eventListeners(){
 			} else if (caretPosition >= word.length){
 				$(this).after("<li class='word edit' contenteditable='true'></li>");
 				$(this).next('li').focus();
+				var sel = window.getSelection();
+				sel.collapseToEnd();
+			};
+		};
+		if (keyCode == 8){
+			if (caretPosition == 0){
+				$(this).prev('.word').attr('contenteditable', 'true').addClass('edit').focus();
+				var elem = $(this).prev('.word').get(0);
+				setEndOfContenteditable(elem);
 			};
 		};
 		if (keyCode == 13){
 			event.preventDefault(); 
-			$(this).next('ul.line').prepend("<li class='word edit' contenteditable='true'></li>")
+			console.log("enter");
+			$(this).prepend("<li class='word edit' contenteditable='true'>dog</li>")
 			$(this).next('li').focus();
+			console.log("well?");
 		};
 	});
 // controls to add - new line, new stanza
@@ -258,27 +269,26 @@ function hideGuides(){
 	$(".line").removeClass("lineGUIDE");
 };
 
-function getCharacterOffsetWithin(range, node) {
-    var treeWalker = document.createTreeWalker(
-        node,
-        NodeFilter.SHOW_TEXT,
-        function(node) {
-            var nodeRange = document.createRange();
-            nodeRange.selectNodeContents(node);
-            return nodeRange.compareBoundaryPoints(Range.END_TO_END, range) < 1 ?
-                NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-        },
-        false
-    );
-
-    var charCount = 0;
-    while (treeWalker.nextNode()) {
-        charCount += treeWalker.currentNode.length;
+// from Nico Burns at http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity
+function setEndOfContenteditable(contentEditableElement)
+{
+    var range,selection;
+    if(document.createRange)//Firefox, Chrome, Opera, Safari, IE 9+
+    {
+        range = document.createRange();//Create a range (a range is a like the selection but invisible)
+        range.selectNodeContents(contentEditableElement);//Select the entire contents of the element with the range
+        range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+        selection = window.getSelection();//get the selection object (allows you to change selection)
+        selection.removeAllRanges();//remove any selections already made
+        selection.addRange(range);//make the range you have just created the visible selection
     }
-    if (range.startContainer.nodeType == 3) {
-        charCount += range.startOffset;
+    else if(document.selection)//IE 8 and lower
+    { 
+        range = document.body.createTextRange();//Create a range (a range is a like the selection but invisible)
+        range.moveToElementText(contentEditableElement);//Select the entire contents of the element with the range
+        range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+        range.select();//Select the range (make it the visible selection
     }
-    return charCount;
 }
 
 
