@@ -165,9 +165,22 @@ function eventListeners(){
 		// backspace
 		if (keyCode == 8){
 			if (caretPosition == 0){
-				$(this).prev('.word').attr('contenteditable', 'true').addClass('edit').focus();
-				var elem = $(this).prev('.word').get(0);
-				setEndOfContenteditable(elem);
+				if (wordIndex > 0){
+					$(this).prev('.word').attr('contenteditable', 'true').addClass('edit').focus();
+					var elem = $(this).prev('.word').get(0);
+					setEndOfContenteditable(elem);
+				} else {
+					var prevParent = $(this).parent().prev();
+					if (prevParent.hasClass('line') == true){
+						prevParent.children().last('.word').addClass('edit').attr('contenteditable', 'true').focus();
+						var elem = prevParent.children().last('.word').get(0);
+						setEndOfContenteditable(elem);
+					} else {
+						event.preventDefault();
+					};
+				};
+				$(this).remove();	
+			} else {
 			};
 		};
 		// enter
@@ -206,8 +219,8 @@ function eventListeners(){
 					passNodes = "<li class='word'>" + word.substring(caretPosition, word.length) + "</li>"
 				};
 			} else if (caretPosition >= word.length){
+				stopRemove = true;
 				if (wordIndex < wordsInLine){
-					stopRemove = true;
 					$(this).siblings().each( function () {
 						if ($(this).index() > wordIndex){
 							var tempWord = $(this).text();
@@ -217,7 +230,6 @@ function eventListeners(){
 					});
 					console.log(passNodes);
 				} else {	
-					stopRemove = true;
 					passNodes = "<li class='word'></li>";
 				};
 			};
@@ -226,6 +238,7 @@ function eventListeners(){
 				nextParent.prepend(passNodes);
 				nextParent.children().first('.word').addClass('edit').attr('contenteditable', 'true').focus();
 			} else {
+				addLine();
 			};
 			if (stopRemove == true){
 				return;
@@ -234,25 +247,6 @@ function eventListeners(){
 			};
 		};
 	});
-// controls to add - new line, new stanza
-	/*$("#randomChoices").on("click", "li", function() {
-		var choice = $(this).text();
-		$("#writingContainer").append("<li> " + choice + " </li>");
-		if (choice.indexOf(" ") != -1){
-			var tempArray = choice.split(" ");
-			choice = tempArray.pop();
-		};
-		getChoices("suggested", choice);
-	});
-	$("#suggestedChoices").on("click", "li", function() {
-		var choice = $(this).text();
-		$("#writingContainer").append("<li> " + choice + " </li>");
-		if (choice.indexOf(" ") != -1){
-			var tempArray = choice.split(" ");
-			choice = tempArray.pop();
-		};
-		getChoices("suggested", choice);
-	});*/
 };
 
 function getChoices(type, word){
@@ -306,7 +300,10 @@ function giveChoices(choices, container){
 function setUpLines(){
 	for (i=0; i<5; i++){
 		$("#poemContainer").append("<ul class='line connected'><li class='setup'></li></ul>");
-	}
+	};
+};
+
+function addLine(){
 };
 
 function removeEdit(){
