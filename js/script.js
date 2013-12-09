@@ -106,7 +106,7 @@ function eventListeners(){
 			showGuides();
 		},
 		beforeStop: function( event, ui ) {
-			var textContainer = ui.item
+			var textContainer = ui.item;
 			var splitTextData = splitWords(textContainer);
 			textContainer.replaceWith(splitTextData.container);
 			getChoices("suggested", splitTextData.finalWord);
@@ -122,7 +122,13 @@ function eventListeners(){
 	$("#newLine").droppable({
 		accept: ".word, .suggestedChoice, .randomChoice",
 		drop: function(event, ui) {
-			addLine();
+			var textContainer = ui.draggable;
+			console.log(ui.draggable);
+			console.log(ui.draggable.text());
+			var splitTextData = splitWords(textContainer);
+			textContainer.replaceWith(splitTextData.container);
+			getChoices("suggested", splitTextData.finalWord);
+			addLine(splitTextData.container);
 		}
 	});
 	$(".setup").remove();
@@ -300,7 +306,7 @@ function setUpLines(){
 
 function addLine(container){
 	$("#poemContainer").append("<ul class='line connected'><li class='setup'></li></ul>");
-	$("#poemContainer").last().sortable({
+	$("#poemContainer").children().last().sortable({
 		connectWith: ".connected, #trash, #newLine",
 		tolerance: "pointer",
 		activate: function ( event, ui ) {
@@ -308,25 +314,15 @@ function addLine(container){
 			showGuides();
 		},
 		beforeStop: function( event, ui ) {
-			//console.log(ui.item.text());
 			var textContainer = ui.item
-			var text = textContainer.text();
-			var textArray = [];
-			var replaceText = "";
-			if (text.indexOf(" ") != -1){
-				textArray = text.split(" ");
-				for (i=0; i<textArray.length; i++){
-					replaceText += "<li class='word'>" + textArray[i] + "</li>"
-				};
-				var word = textArray.pop();
-				getChoices("suggested", word);
-				textContainer.replaceWith(replaceText);
-			} else {
-				getChoices("suggested", text);
-			};
+			var splitTextData = splitWords(textContainer);
+			textContainer.replaceWith(splitTextData.container);
+			getChoices("suggested", splitTextData.finalWord);
 			hideGuides();
 		}
     });
+	$(".setup").remove();
+	$("#poemContainer").children().last().append(container);
 };
 
 function removeEdit(){
@@ -349,8 +345,8 @@ function hideGuides(){
 	$(".line").removeClass("lineGUIDE");
 };
 
-function splitWords(textContainer){
-	var text = textContainer.text();
+function splitWords(container){
+	var text = container.text();
 	var textArray = [];
 	var replaceText = "";
 	var finalWord = "";
@@ -361,8 +357,8 @@ function splitWords(textContainer){
 		};
 		finalWord = textArray.pop();
 	} else {
-		replaceText = "<li class='word'>" + textContainer.text() + "</li>";
-		finalWord = textContainer.text();
+		replaceText = "<li class='word'>" + container.text() + "</li>";
+		finalWord = container.text();
 	};
 	return {
 		container: replaceText,
