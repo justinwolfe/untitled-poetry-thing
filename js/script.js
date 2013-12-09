@@ -114,7 +114,7 @@ function eventListeners(){
 		}
     });
 	$("#trash").droppable({
-		accept: ".word",
+		accept: ".word, .suggestedChoice, .randomChoice",
 		drop: function(event, ui) {
 			ui.draggable.remove();
 		}
@@ -123,12 +123,10 @@ function eventListeners(){
 		accept: ".word, .suggestedChoice, .randomChoice",
 		drop: function(event, ui) {
 			var textContainer = ui.draggable;
-			console.log(ui.draggable);
-			console.log(ui.draggable.text());
 			var splitTextData = splitWords(textContainer);
-			textContainer.replaceWith(splitTextData.container);
 			getChoices("suggested", splitTextData.finalWord);
 			addLine(splitTextData.container);
+			ui.draggable.remove();
 		}
 	});
 	$(".setup").remove();
@@ -299,7 +297,7 @@ function giveChoices(choices, container){
 };
 
 function setUpLines(){
-	for (i=0; i<5; i++){
+	for (i=0; i<3; i++){
 		$("#poemContainer").append("<ul class='line connected'><li class='setup'></li></ul>");
 	};
 };
