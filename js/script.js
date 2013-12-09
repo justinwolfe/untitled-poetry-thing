@@ -99,28 +99,17 @@ function switchScreen(){
 
 function eventListeners(){
 	$( "#randomChoices, #selectedChoices, .connected" ).sortable({
-		connectWith: ".connected, #trash",
+		connectWith: ".connected, #trash, #newLine",
 		tolerance: "pointer",
 		activate: function ( event, ui ) {
 			removeEdit();
 			showGuides();
 		},
 		beforeStop: function( event, ui ) {
-			//console.log(ui.item.text());
-			var text = ui.item.text();
-			var textArray = [];
-			var replaceText = "";
-			if (text.indexOf(" ") != -1){
-				textArray = text.split(" ");
-				for (i=0; i<textArray.length; i++){
-					replaceText += "<li class='word'>" + textArray[i] + "</li>"
-				};
-				var word = textArray.pop();
-				getChoices("suggested", word);
-				ui.item.replaceWith(replaceText);
-			} else {
-				getChoices("suggested", text);
-			};
+			var textContainer = ui.item
+			var splitTextData = splitWords(textContainer);
+			textContainer.replaceWith(splitTextData.container);
+			getChoices("suggested", splitTextData.finalWord);
 			hideGuides();
 		}
     });
@@ -131,9 +120,9 @@ function eventListeners(){
 		}
 	});
 	$("#newLine").droppable({
-		accept: ".word",
+		accept: ".word, .suggestedChoice, .randomChoice",
 		drop: function(event, ui) {
-			ui.draggable.remove();
+			addLine();
 		}
 	});
 	$(".setup").remove();
@@ -309,7 +298,35 @@ function setUpLines(){
 	};
 };
 
-function addLine(){
+function addLine(container){
+	$("#poemContainer").append("<ul class='line connected'><li class='setup'></li></ul>");
+	$("#poemContainer").last().sortable({
+		connectWith: ".connected, #trash, #newLine",
+		tolerance: "pointer",
+		activate: function ( event, ui ) {
+			removeEdit();
+			showGuides();
+		},
+		beforeStop: function( event, ui ) {
+			//console.log(ui.item.text());
+			var textContainer = ui.item
+			var text = textContainer.text();
+			var textArray = [];
+			var replaceText = "";
+			if (text.indexOf(" ") != -1){
+				textArray = text.split(" ");
+				for (i=0; i<textArray.length; i++){
+					replaceText += "<li class='word'>" + textArray[i] + "</li>"
+				};
+				var word = textArray.pop();
+				getChoices("suggested", word);
+				textContainer.replaceWith(replaceText);
+			} else {
+				getChoices("suggested", text);
+			};
+			hideGuides();
+		}
+    });
 };
 
 function removeEdit(){
@@ -330,6 +347,27 @@ function showGuides(){
 
 function hideGuides(){
 	$(".line").removeClass("lineGUIDE");
+};
+
+function splitWords(textContainer){
+	var text = textContainer.text();
+	var textArray = [];
+	var replaceText = "";
+	var finalWord = "";
+	if (text.indexOf(" ") != -1){
+		textArray = text.split(" ");
+		for (i=0; i<textArray.length; i++){
+			replaceText += "<li class='word'>" + textArray[i] + "</li>";
+		};
+		finalWord = textArray.pop();
+	} else {
+		replaceText = "<li class='word'>" + textContainer.text() + "</li>";
+		finalWord = textContainer.text();
+	};
+	return {
+		container: replaceText,
+		finalWord: finalWord
+	};
 };
 
 // from Nico Burns at http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity
