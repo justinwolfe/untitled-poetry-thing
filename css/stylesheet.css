@@ -73,6 +73,12 @@ textarea {
 	background-color: blue;
 }
 
+.poemTool{
+	background-color: white;
+	color: black;
+	padding: .5%;
+}
+
 #controlsContainer{
 	position: fixed;
 	outline: 1px solid gray;

@@ -1,9 +1,4 @@
 $(document).ready(function() {
-	$("body").on({
-		ontouchmove : function(e) {
-			e.preventDefault(); 
-		}
-	});
 	setInputs();
 });
 
@@ -104,7 +99,7 @@ function switchScreen(){
 
 function eventListeners(){
 	$( "#randomChoices, #selectedChoices, .connected" ).sortable({
-		connectWith: ".connected",
+		connectWith: ".connected, #trash",
 		tolerance: "pointer",
 		activate: function ( event, ui ) {
 			removeEdit();
@@ -129,11 +124,21 @@ function eventListeners(){
 			hideGuides();
 		}
     });
+	$("#trash").droppable({
+		accept: ".word",
+		drop: function(event, ui) {
+			ui.draggable.remove();
+		}
+	});
+	$("#newLine").droppable({
+		accept: ".word",
+		drop: function(event, ui) {
+			ui.draggable.remove();
+		}
+	});
 	$(".setup").remove();
 	$("#poemContainer").on("dblclick", "li", function () {
-		$(this).attr('contenteditable', 'true');
-		$(this).addClass('edit');
-		$(this).focus();
+		$(this).attr('contenteditable', 'true').addClass('edit').focus();
 	}).on("blur", "li.edit", function () {
 		$(this).attr('contenteditable', 'false');
 		// use this to clean up punctuation 
@@ -142,22 +147,22 @@ function eventListeners(){
 	}).on("keydown", "li.edit", function (event) {
 		var keyCode = event.keyCode;
 		var caretPosition = window.getSelection().getRangeAt(0).startOffset;
-		var word = $(this).text()
-		var wordIndex = $(this).index();
-		var wordsInLine = $(this).siblings().length;
+		var wordContainer = $(this);
+		var word = wordContainer.text()
+		var wordIndex = wordContainer.index();
+		var wordsInLine = wordContainer.siblings().length;
 		//space bar
 		if (keyCode == 32){
 			event.preventDefault(); 
 			console.log(caretPosition + ", " + word.length); 
 			if (caretPosition == 0){
-				$(this).blur();
+				wordContainer.blur();
 			} else if (caretPosition > 0 && caretPosition < word.length){
-				$(this).text(word.substring(0, caretPosition));
-				$(this).after("<li class='word edit' contenteditable='true'>" + word.substring(caretPosition, word.length) + "</li>");
-				$(this).next('li').focus();
+				wordContainer.text(word.substring(0, caretPosition));
+				wordContainer.after("<li class='word edit' contenteditable='true'>" + word.substring(caretPosition, word.length) + "</li>");
+				wordContainer.next('li').focus();
 			} else if (caretPosition >= word.length){
-				$(this).after("<li class='word edit' contenteditable='true'></li>");
-				$(this).next('li').focus();
+				wordContainer.after("<li class='word edit' contenteditable='true'></li>").next('li').focus();
 				var sel = window.getSelection();
 				sel.collapseToEnd();
 			};
@@ -166,11 +171,11 @@ function eventListeners(){
 		if (keyCode == 8){
 			if (caretPosition == 0){
 				if (wordIndex > 0){
-					$(this).prev('.word').attr('contenteditable', 'true').addClass('edit').focus();
-					var elem = $(this).prev('.word').get(0);
+					wordContainer.prev('.word').attr('contenteditable', 'true').addClass('edit').focus();
+					var elem = wordContainer.prev('.word').get(0);
 					setEndOfContenteditable(elem);
 				} else {
-					var prevParent = $(this).parent().prev();
+					var prevParent = wordContainer.parent().prev();
 					if (prevParent.hasClass('line') == true){
 						prevParent.children().last('.word').addClass('edit').attr('contenteditable', 'true').focus();
 						var elem = prevParent.children().last('.word').get(0);
@@ -179,7 +184,8 @@ function eventListeners(){
 						event.preventDefault();
 					};
 				};
-				$(this).remove();	
+				//need to fix this so container is deleted if it's empty but isn't if it's not
+				//wordContainer.remove();	
 			} else {
 			};
 		};
@@ -190,8 +196,8 @@ function eventListeners(){
 			var stopRemove = false;
 			if (caretPosition == 0){
 				if (wordIndex < wordsInLine){
-					passNodes = "<li class='word'>" + $(this).text() + "</li>"
-					$(this).siblings().each( function () {
+					passNodes = "<li class='word'>" + word + "</li>"
+					wordContainer.siblings().each( function () {
 						if ($(this).index() > wordIndex){
 							var tempWord = $(this).text();
 							passNodes += "<li class='word'>" + tempWord + "</li>";
@@ -199,14 +205,14 @@ function eventListeners(){
 						};
 					});
 				} else {
-					passNodes = "<li class='word'>" + $(this).text() + "</li>"
+					passNodes = "<li class='word'>" + word + "</li>"
 				};
 			} else if (caretPosition > 0 && caretPosition < word.length){
 				stopRemove = true;
 				if (wordIndex < wordsInLine){
-					$(this).text(word.substring(0, caretPosition));
-					$(this).after("<li class='word'>" + word.substring(caretPosition, word.length) + "</li>");
-					$(this).siblings().each( function () {
+					wordContainer.text(word.substring(0, caretPosition));
+					wordContainer.after("<li class='word'>" + word.substring(caretPosition, word.length) + "</li>");
+					wordContainer.siblings().each( function () {
 						if ($(this).index() > wordIndex){
 							var tempWord = $(this).text();
 							passNodes += "<li class='word'>" + tempWord + "</li>";
@@ -215,7 +221,7 @@ function eventListeners(){
 					});
 				} else {
 					//set this to before the return
-					$(this).text(word.substring(0, caretPosition));	
+					wordContainer.text(word.substring(0, caretPosition));	
 					passNodes = "<li class='word'>" + word.substring(caretPosition, word.length) + "</li>"
 				};
 			} else if (caretPosition >= word.length){
@@ -233,12 +239,12 @@ function eventListeners(){
 					passNodes = "<li class='word'></li>";
 				};
 			};
-			var nextParent = $(this).parent().next();
+			var nextParent = wordContainer.parent().next();
 			if (nextParent.hasClass('line') == true){
 				nextParent.prepend(passNodes);
 				nextParent.children().first('.word').addClass('edit').attr('contenteditable', 'true').focus();
-			} else {
-				addLine();
+			} else {		
+				//addLine();
 			};
 			if (stopRemove == true){
 				return;
