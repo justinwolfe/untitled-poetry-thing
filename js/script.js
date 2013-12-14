@@ -98,7 +98,17 @@ function switchScreen(){
 };
 
 function eventListeners(){
-	$( "#randomChoices, #selectedChoices, .connected" ).sortable({
+	$("#poemContainer").sortable({
+		tolerance: "pointer",
+		activate: function ( event, ui ) {
+			removeEdit();
+			showGuides();
+		},
+		beforeStop: function( event, ui ) {
+			hideGuides();
+		}
+	});
+	$("#randomChoices, #selectedChoices, .connected").sortable({
 		connectWith: ".connected, #trash, #newLine",
 		tolerance: "pointer",
 		activate: function ( event, ui ) {
@@ -114,7 +124,7 @@ function eventListeners(){
 		}
     });
 	$("#trash").droppable({
-		accept: ".word, .suggestedChoice, .randomChoice",
+		accept: ".word, .suggestedChoice, .randomChoice, .line",
 		drop: function(event, ui) {
 			ui.draggable.remove();
 		}
@@ -132,6 +142,8 @@ function eventListeners(){
 	$(".setup").remove();
 	$("#poemContainer").on("dblclick", "li", function () {
 		$(this).attr('contenteditable', 'true').addClass('edit').focus();
+	}).on("dblclick", "ol", function () {
+		console.log("clicked the line");
 	}).on("blur", "li.edit", function () {
 		$(this).attr('contenteditable', 'false');
 		// use this to clean up punctuation and empty spans
@@ -139,6 +151,7 @@ function eventListeners(){
 		//cleanEdit(wordContainer);
 		// do i need a function to delete empty word containers?
 		$(this).removeClass('edit');
+		//getChoices("suggested", $(this).text());
 	}).on("keydown", "li.edit", function (event) {
 		var keyCode = event.keyCode;
 		var wordContainer = $(this);
@@ -160,6 +173,7 @@ function eventListeners(){
 				wordContainer.after("<li class='word edit' contenteditable='true'></li>").next('li').focus();
 				var sel = window.getSelection();
 				sel.collapseToEnd();
+				getChoices("suggested", word);
 			};
 		};
 		// left arrow
@@ -378,10 +392,12 @@ function cleanEdit(container){
 
 function showGuides(){
 	$(".line").addClass("lineGUIDE");
+	$(".poemTool").css("display", "block");
 };
 
 function hideGuides(){
 	$(".line").removeClass("lineGUIDE");
+	$(".poemTool").css("display", "none");
 };
 
 function splitWords(container){

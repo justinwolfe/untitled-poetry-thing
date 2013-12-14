@@ -78,9 +78,9 @@ textarea {
 }
 
 .poemTool{
-	background-color: white;
-	color: black;
-	padding: .5%;
+	background-color: black;
+	color: white;
+	display: none;
 }
 
 #writingContainer{
@@ -88,6 +88,8 @@ textarea {
 	top: 0;
 	height: 75%;
 	width: 100%;
+	overflow-y: scroll;
+	overflow-x: hidden;
 }
 
 #controlsContainer{
