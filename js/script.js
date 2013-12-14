@@ -134,16 +134,18 @@ function eventListeners(){
 		$(this).attr('contenteditable', 'true').addClass('edit').focus();
 	}).on("blur", "li.edit", function () {
 		$(this).attr('contenteditable', 'false');
-		// use this to clean up punctuation 
-		cleanEdit();
+		// use this to clean up punctuation and empty spans
+		// var wordContainer = $(this);
+		//cleanEdit(wordContainer);
+		// do i need a function to delete empty word containers?
 		$(this).removeClass('edit');
 	}).on("keydown", "li.edit", function (event) {
 		var keyCode = event.keyCode;
-		var caretPosition = window.getSelection().getRangeAt(0).startOffset;
 		var wordContainer = $(this);
 		var word = wordContainer.text()
 		var wordIndex = wordContainer.index();
 		var wordsInLine = wordContainer.siblings().length;
+		var caretPosition = window.getSelection().getRangeAt(0).startOffset;
 		//space bar
 		if (keyCode == 32){
 			event.preventDefault(); 
@@ -158,6 +160,43 @@ function eventListeners(){
 				wordContainer.after("<li class='word edit' contenteditable='true'></li>").next('li').focus();
 				var sel = window.getSelection();
 				sel.collapseToEnd();
+			};
+		};
+		// left arrow
+		if (keyCode == 37){
+			if (caretPosition == 0){
+				if (wordIndex > 0){
+					wordContainer.prev('.word').attr('contenteditable', 'true').addClass('edit').focus();
+					var elem = wordContainer.prev('.word').get(0);
+					setEndOfContenteditable(elem);
+				} else {
+					var prevParent = wordContainer.parent().prev();
+					if (prevParent.hasClass('line') == true){
+						prevParent.children().last('.word').addClass('edit').attr('contenteditable', 'true').focus();
+						var elem = prevParent.children().last('.word').get(0);
+						setEndOfContenteditable(elem);
+					} else {
+						event.preventDefault();
+					};
+				};	
+				event.preventDefault();
+			};	
+		};
+		//right arrow
+		if (keyCode == 39){
+			if (caretPosition >= word.length){
+				if (wordIndex < wordsInLine){
+					wordContainer.next('.word').attr('contenteditable', 'true').addClass('edit').focus();
+					event.preventDefault();
+				} else {
+					var nextParent = wordContainer.parent().next();
+					if (nextParent.hasClass('line') == true){
+						nextParent.children().first('.word').addClass('edit').attr('contenteditable', 'true').focus();
+						event.preventDefault();
+					} else {
+						event.preventDefault();
+					};
+				};
 			};
 		};
 		// backspace
@@ -236,8 +275,9 @@ function eventListeners(){
 			if (nextParent.hasClass('line') == true){
 				nextParent.prepend(passNodes);
 				nextParent.children().first('.word').addClass('edit').attr('contenteditable', 'true').focus();
-			} else {		
-				//addLine();
+			} else {	
+				addLine(passNodes);
+				wordContainer.parent().parent().children().last().children().first('.word').addClass('edit').attr('contenteditable', 'true').focus();	
 			};
 			if (stopRemove == true){
 				return;
@@ -328,11 +368,12 @@ function removeEdit(){
 	$(".edit").removeClass('edit');
 };
 
-function cleanEdit(){
-	$(".edit").each(function(){
-		var text = $(this).text();
-		console.log(text);
-	});
+//maybe wait and see if necessary
+function cleanEdit(container){
+	var text = container.text();
+	var punctuation = [",",".",":",";","-","[","]","/","\\","?","!","@","#","$","%","^","&","*","(",")","=","+"]
+	var leftBoundary = text[0];
+	var rightBoundary = text[text.length-1];
 };
 
 function showGuides(){
@@ -384,6 +425,28 @@ function setEndOfContenteditable(contentEditableElement)
         range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
         range.select();//Select the range (make it the visible selection
     }
+}
+
+// by Ebrahim Byagowi on SO at http://stackoverflow.com/questions/4514144/js-string-split-without-removing-the-delimiters
+function split(text, regex) {
+    var token, index, result = [];
+    while (text !== '') {
+        regex.lastIndex = 0;
+        token = regex.exec(text);
+        if (token === null) {
+            break;
+        }
+        index = token.index;
+        if (token[0].length === 0) {
+            index = 1;
+        }
+        result.push(text.substr(0, index));
+        result.push(token[0]);
+        index = index + token[0].length;
+        text = text.slice(index);
+    }
+    result.push(text);
+    return result;
 }
 
 

@@ -1,5 +1,8 @@
 * {
 	cursor: default;
+	margin: 0 auto;
+	padding: 0;
+	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 
 li { 
@@ -22,12 +25,13 @@ textarea {
 #inputScreen{
 	width: 100%;
 	height: 100%;
+	font-size: 1em;
 }
 
 #writingScreen{
 	display: none;
-	background-color: black;
-	color: white;
+	background-color: white;
+	color: black;
 	width: 100%;
 	height: 100%;
 	-webkit-user-select: none; /* Chrome/Safari */        
@@ -42,13 +46,13 @@ textarea {
 .randomChoice{
 	margin-left: .5%;
 	margin-right: .5%;
-	outline: 1px solid white;
+	outline: 1px solid black;
 }
 
 .suggestedChoice{
 	margin-left: .5%;
 	margin-right: .5%;
-	outline: 1px solid white;
+	outline: 1px solid black;
 	background-color: white;
 	color: black;
 }
@@ -58,7 +62,7 @@ textarea {
 }
 
 .lineGUIDE{
-	background-color: grey;
+	border-bottom: 2px solid blue;
 }
 
 .setup{
@@ -77,6 +81,13 @@ textarea {
 	background-color: white;
 	color: black;
 	padding: .5%;
+}
+
+#writingContainer{
+	position: fixed;
+	top: 0;
+	height: 75%;
+	width: 100%;
 }
 
 #controlsContainer{
