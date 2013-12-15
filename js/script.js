@@ -135,7 +135,8 @@ function eventListeners(){
 			var textContainer = ui.draggable;
 			var splitTextData = splitWords(textContainer);
 			getChoices("suggested", splitTextData.finalWord);
-			addLine(splitTextData.container);
+			var lastLine = $("#poemContainer").children().length - 1;
+			addLine(splitTextData.container, lastLine);
 			ui.draggable.remove();
 		}
 	});
