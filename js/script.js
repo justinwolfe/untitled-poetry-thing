@@ -190,6 +190,13 @@ function eventListeners(){
 	}).on("blur", "li.edit", function () {
 		$(this).attr('contenteditable', 'false');
 		$(this).removeClass('edit');
+		$(".word").each(function(){
+			if ($(this).text() == "" || $(this).text() == " "){
+				if ($(this).hasClass('edit') == false){
+					$(this).remove();
+				};
+			};
+		});
 		// to split words (in case of pasting)
 		// use an index of to see if it contains white space
 		// and if it does, use the splitter on it before losing it
@@ -269,15 +276,22 @@ function eventListeners(){
 				} else {
 					var prevParent = wordContainer.parent().prev();
 					if (prevParent.hasClass('line') == true){
-						prevParent.children().last('.word').addClass('edit').attr('contenteditable', 'true').focus();
-						var elem = prevParent.children().last('.word').get(0);
-						setEndOfContenteditable(elem);
+						if (prevParent.children().length > 0){
+							prevParent.children().last('.word').addClass('edit').attr('contenteditable', 'true').focus();
+							var elem = prevParent.children().last('.word').get(0);
+							setEndOfContenteditable(elem);
+						} else {
+							prevParent.remove();
+							prevParent = wordContainer.parent().prev();
+							prevParent.append("<li class='word'></li>")
+							prevParent.children().first().addClass('edit').attr('contenteditable', 'true').focus();
+							var elem = prevParent.children().first('.word').get(0);
+							setEndOfContenteditable(elem);
+						};
 					} else {
 						event.preventDefault();
 					};
 				};
-				//need to fix this so container is deleted if it's empty but isn't if it's not
-				//wordContainer.remove();	
 			} else {
 			};
 		};
