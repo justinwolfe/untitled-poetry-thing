@@ -19,8 +19,7 @@ var runtime = {
 function setInputs(){
 	runtime.fileInputs[0] = "Brown Corpus@assets/browncorpus.txt";
 	runtime.fileInputs[1] = "Lives of the Artists by Giorgio Vasari@assets/livesoftheartists.txt";
-	runtime.fileInputs[2] = "Grimm Fairy Tales@assets/grimm.txt";
-	runtime.fileInputs[3] = "Moby Dick by Herman Melville@assets/mobydick.txt";
+	runtime.fileInputs[2] = "Moby Dick by Herman Melville@assets/mobydick.txt";
 	for (i=0; i<runtime.fileInputs.length; i++){
 		var tempArray = runtime.fileInputs[i].split("@");
 		$("#fileInputContainer").append("<div><input type='checkbox' class='inputCheckbox' id='inputCheckbox" + i + "' value='" + tempArray[1] + "'>" + tempArray[0] + "</div>");
@@ -142,8 +141,48 @@ function eventListeners(){
 	$(".setup").remove();
 	$("#poemContainer").on("dblclick", "li", function () {
 		$(this).attr('contenteditable', 'true').addClass('edit').focus();
-	}).on("dblclick", "ol", function () {
-		console.log("clicked the line");
+	}).on("dblclick", "ul", function () {
+		var target = $( event.target );
+		if (target.is('ul') == true){
+			var line = $(this);
+			var lineChildren = line.children();
+			var liHTML = "<li class='word'></li>";
+			var wordAmount = lineChildren.length;
+			if (wordAmount == 0){
+				line.append(liHTML);
+				lineChildren.first().attr('contenteditable', 'true').addClass('edit').focus();
+			} else {
+				//var
+				var wordPositions = [];
+				var clickX = event.pageX - this.offsetLeft;
+				var insertPosition;
+				lineChildren.each(function(i) {
+					var position = $(this).position();
+					wordPositions[i] = []
+					wordPositions[i][0] = position.left;
+					wordPositions[i][1] = position.left + $(this).width();
+				});
+				if (clickX < wordPositions[0][0]){
+					lineChildren.first().before(liHTML);
+					lineChildren.first().attr('contenteditable', 'true').addClass('edit').focus();
+				} else if (clickX > wordPositions[wordPositions.length - 1][1]){
+					lineChildren.last().after(liHTML);
+					lineChildren.last().attr('contenteditable', 'true').addClass('edit').focus();
+				} else {
+					for (i=0; i < wordPositions.length - 1; i++){
+						var currentWordStart = wordPositions[i][0];
+						var currentWordEnd = wordPositions[i][1];
+						var nextWordStart = wordPositions[i+1][0];;
+						if (clickX > currentWordEnd && clickX < nextWordStart){
+							insertPosition = i + 1;
+							break;
+						};
+					};
+					lineChildren.eq(insertPosition).before(liHTML);
+					lineChildren.eq(insertPosition).prev().attr('contenteditable', 'true').addClass('edit').focus();
+				};
+			};
+		};
 	}).on("blur", "li.edit", function () {
 		$(this).attr('contenteditable', 'false');
 		// use this to clean up punctuation and empty spans

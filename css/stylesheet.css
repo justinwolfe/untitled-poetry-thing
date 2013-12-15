@@ -3,6 +3,7 @@
 	margin: 0 auto;
 	padding: 0;
 	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+	outline: none;
 }
 
 li { 
@@ -74,7 +75,7 @@ textarea {
 }
 
 .edit{
-	background-color: blue;
+	background-color: #D7F2F7;
 }
 
 .poemTool{
