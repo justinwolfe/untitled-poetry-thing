@@ -164,9 +164,11 @@ function eventListeners(){
 				});
 				if (clickX < wordPositions[0][0]){
 					lineChildren.first().before(liHTML);
+					lineChildren = line.children();
 					lineChildren.first().attr('contenteditable', 'true').addClass('edit').focus();
 				} else if (clickX > wordPositions[wordPositions.length - 1][1]){
 					lineChildren.last().after(liHTML);
+					lineChildren = line.children();
 					lineChildren.last().attr('contenteditable', 'true').addClass('edit').focus();
 				} else {
 					for (i=0; i < wordPositions.length - 1; i++){
