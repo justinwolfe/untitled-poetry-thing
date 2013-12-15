@@ -330,14 +330,10 @@ function eventListeners(){
 					passNodes = "<li class='word'></li>";
 				};
 			};
-			var nextParent = wordContainer.parent().next();
-			if (nextParent.hasClass('line') == true){
-				nextParent.prepend(passNodes);
-				nextParent.children().first('.word').addClass('edit').attr('contenteditable', 'true').focus();
-			} else {	
-				addLine(passNodes);
-				wordContainer.parent().parent().children().last().children().first('.word').addClass('edit').attr('contenteditable', 'true').focus();	
-			};
+			var lineIndex = wordContainer.parent().index();
+			console.log("line index= " + lineIndex);
+			addLine(passNodes, lineIndex);
+			wordContainer.parent().next().children().first('.word').addClass('edit').attr('contenteditable', 'true').focus();	
 			if (stopRemove == true){
 				return;
 			} else {
@@ -401,9 +397,9 @@ function setUpLines(){
 	};
 };
 
-function addLine(container){
-	$("#poemContainer").append("<ul class='line connected'><li class='setup'></li></ul>");
-	$("#poemContainer").children().last().sortable({
+function addLine(container, index){
+	$("#poemContainer").children().eq(index).after("<ul class='line connected'><li class='setup'></li></ul>");
+	$("#poemContainer").children().eq(index).next().sortable({
 		connectWith: ".connected, #trash, #newLine",
 		tolerance: "pointer",
 		activate: function ( event, ui ) {
@@ -419,7 +415,7 @@ function addLine(container){
 		}
     });
 	$(".setup").remove();
-	$("#poemContainer").children().last().append(container);
+	$("#poemContainer").children().eq(index+1).append(container);
 };
 
 function removeEdit(){
