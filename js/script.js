@@ -13,7 +13,8 @@ var runtime = {
 	requestCounter: 0,
 	requestsStarted: false,
 	requestsDone: false,
-	inputString: ""
+	inputString: "",
+	ctrlPressed: false
 };
 
 function setInputs(){
@@ -187,12 +188,15 @@ function eventListeners(){
 		};
 	}).on("blur", "li.edit", function () {
 		$(this).attr('contenteditable', 'false');
-		// use this to clean up punctuation and empty spans
+		$(this).removeClass('edit');
+		// to split words (in case of pasting)
+		// use an index of to see if it contains white space
+		// and if it does, use the splitter on it before losing it
+		// also probably a good idea to strip new lines
+		// use some function to delete empty spaces
 		// var wordContainer = $(this);
 		//cleanEdit(wordContainer);
-		// do i need a function to delete empty word containers?
-		$(this).removeClass('edit');
-		//getChoices("suggested", $(this).text());
+		//if (indexOf
 	}).on("keydown", "li.edit", function (event) {
 		var keyCode = event.keyCode;
 		var wordContainer = $(this);
